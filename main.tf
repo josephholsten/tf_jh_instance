@@ -1,6 +1,6 @@
 resource "template_file" "user-data" {
     count = "${var.instance_count}"
-    filename = "${path.module}/files/user-data.yaml"
+    template = "${file(\"${path.module}/files/user-data.yaml\")}"
     vars {
       environment = "${var.environment}"
       role = "${var.role}"
@@ -37,14 +37,6 @@ resource "nsone_record" "ns-record-a" {
   }
 }
 
-# resource "cloudflare_record" "ns-record-a" {
-#     count  = "${var.instance_count}"
-#     domain = "${var.zone}"
-#     name = "${var.role}-${count.index+1}"
-#     value = "${element(digitalocean_droplet.server-instance.*.ipv4_address, count.index)}"
-#     type = "A"
-# }
-
 resource "nsone_record" "ns-record-aaaa" {
   count  = "${var.instance_count}"
   zone   = "${var.zone}"
@@ -54,11 +46,3 @@ resource "nsone_record" "ns-record-aaaa" {
     answer = "${element(digitalocean_droplet.server-instance.*.ipv6_address, count.index)}"
   }
 }
-
-# resource "cloudflare_record" "ns-record-a" {
-#     count  = "${var.instance_count}"
-#     domain = "${var.zone}"
-#     name = "${var.role}-${count.index+1}"
-#     value = "${element(digitalocean_droplet.server-instance.*.ipv6_address, count.index)}"
-#     type = "AAAA"
-# }
